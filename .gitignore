@@ -1,0 +1,10 @@
+.idea
+*/.ipynb_checkpoints
+*/__pycache__
+/kakao-anena/product-categories-classification/input
+pymldg-rev/data
+python-data-analysis/data
+python-data-analysis/img
+python-for-data-analysis/datasets
+python-for-data-analysis/examples
+stock-analysis-in-python/chap04/*.xls
