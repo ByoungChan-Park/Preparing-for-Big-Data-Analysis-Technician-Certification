@@ -16,17 +16,13 @@ import warnings
 
 warnings.filterwarnings(action='ignore')
 
-# 전처리된 데이터가 저장된 디렉터리
 DB_PATH = f'../input/processed'
 
-# 토큰을 인덱스로 치환할 때 사용될 사전 파일이 저장된 디렉터리
 VOCAB_DIR = os.path.join(DB_PATH, 'vocab')
 
-# 학습된 모델의 파라미터가 저장될 디렉터리
 MODEL_PATH = f'../model'
 
 
-# 미리 정의된 설정 값
 class CFG:
     learning_rate = 3.0e-4  # 러닝 레이트
     batch_size = 1024  # 배치 사이즈
@@ -55,7 +51,51 @@ class CFG:
 
 
 def main():
-    pass
+    parser = argparse.ArgumentParser("")
+    parser.add_argument("--model", type=str, default='')
+    parser.add_argument("--batch_size", type=int, default=CFG.batch_size)
+    parser.add_argument("--nepochs", type=int, default=CFG.num_train_epochs)
+    parser.add_argument("--seq_len", type=int, default=CFG.seq_len)
+    parser.add_argument("--nworkers", type=int, default=CFG.num_workers)
+    parser.add_argument("--wsteps", type=int, default=CFG.warmup_steps)
+    parser.add_argument("--seed", type=int, default=7)
+    parser.add_argument("--nlayers", type=int, default=CFG.nlayers)
+    parser.add_argument("--nheads", type=int, default=CFG.nheads)
+    parser.add_argument("--hidden_size", type=int, default=CFG.hidden_size)
+    parser.add_argument("--fold", type=int, default=0)
+    parser.add_argument("--stratified", action='store_true')
+    parser.add_argument("--lr", type=float, default=CFG.learning_rate)
+    parser.add_argument("--dropout", type=float, default=CFG.dropout)
+    args = parser.parse_args()
+    print(args)
+
+    # 키워드 인자로 받은 값을 CFG로 다시 저장합니다.
+    CFG.batch_size = args.batch_size
+    CFG.num_train_epochs = args.nepochs
+    CFG.seq_len = args.seq_len
+    CFG.num_workers = args.nworkers
+    CFG.warmup_steps = args.wsteps
+    CFG.learning_rate = args.lr
+    CFG.dropout = args.dropout
+    CFG.seed = args.seed
+    CFG.nlayers = args.nlayers
+    CFG.nheads = args.nheads
+    CFG.hidden_size = args.hidden_size
+    print(CFG.__dict__)
+
+    # 랜덤 시드를 설정하여 매 코드를 실행할 때마다 동일한 결과를 얻게 합니다.
+    os.environ['PYTHONHASHSEED'] = str(CFG.seed)
+    random.seed(CFG.seed)
+    np.random.seed(CFG.seed)
+    torch.manual_seed(CFG.seed)
+    torch.cuda.manual_seed(CFG.seed)
+    torch.backends.cudnn.deterministic = True
+
+    # 전처리된 데이터를 읽어옵니다.
+    print('loading ...')
+    train_df = pd.read_csv(CFG.csv_path, dtype={'tokens': str})
+    train_df['img_idx'] = train_df.index  # 몇 번째 행인지 img_idx 칼럼에 기록
+    print(train_df.shape())
 
 
 if __name__ == '__main__':
