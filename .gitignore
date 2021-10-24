@@ -6,6 +6,7 @@
 *.svg
 *.pyc
 /kakao-anena/product-categories-classification/.ipynb_checkpoints
+.ipynb_checkpoints
 /kakao-anena/product-categories-classification/input
 /kakao-anena/product-categories-classification/code/.ipynb_checkpoints
 pymldg-rev/data
